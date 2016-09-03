@@ -10,17 +10,11 @@ namespace PointOfSaleUI.Business.Services.Local
     public class GetBasketCartStateService : PointOfSaleService
     {
 
-        private BasketCart basketCart;
-
         private bool basketEmpty;
-
-        public GetBasketCartStateService(BasketCart b)
-        {
-            basketCart = b;
-        }
 
         protected override void Dispatch()
         {
+            BasketCart basketCart = DomainRoot.BasketCart;
             basketEmpty = basketCart.IsEmpty();
         }
 

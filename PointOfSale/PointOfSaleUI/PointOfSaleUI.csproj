@@ -48,28 +48,63 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\Domain\BasketCart.cs" />
+    <Compile Include="Business\Domain\Change\ChangeStategy.cs" />
+    <Compile Include="Business\Domain\IMoney.cs" />
+    <Compile Include="Business\Domain\DomainRoot.cs" />
     <Compile Include="Business\Domain\Euro.cs" />
     <Compile Include="Business\Domain\SellableItem.cs" />
+    <Compile Include="Business\Domain\SellingItems.cs" />
+    <Compile Include="Business\Domain\User.cs" />
+    <Compile Include="Business\Domain\UserRole.cs" />
+    <Compile Include="Business\Exceptions\CategoryAlreadyExistException.cs" />
+    <Compile Include="Business\Exceptions\CategoryDoesntExistException.cs" />
     <Compile Include="Business\Exceptions\ImpossibleSubtractionException.cs" />
     <Compile Include="Business\Exceptions\InsuficcientMoneyException.cs" />
     <Compile Include="Business\Exceptions\InvalidParameterMoneyException.cs" />
     <Compile Include="Business\Exceptions\NegativeEuroResultException.cs" />
     <Compile Include="Business\Exceptions\PointOfSaleException.cs" />
-    <Compile Include="Business\Persistence\PersistentData.cs" />
+    <Compile Include="Business\Domain\SellingStatistic.cs" />
+    <Compile Include="Business\Exceptions\SellingItemAlreadyExistException.cs" />
+    <Compile Include="Business\Exceptions\SellingItemDoesntExistException.cs" />
+    <Compile Include="Business\Persistence\PersistenceManager.cs" />
     <Compile Include="Business\Services\Integrator\CheckoutBasketCartIntegratorService.cs" />
     <Compile Include="Business\Services\Local\AddItemToBasketService.cs" />
+    <Compile Include="Business\Services\Local\AddSellingItemService.cs" />
+    <Compile Include="Business\Services\Local\ChangeSellingItemInformationService.cs" />
     <Compile Include="Business\Services\Local\CheckoutBasketCartService.cs" />
+    <Compile Include="Business\Services\Local\ClearStatisticDataService.cs" />
     <Compile Include="Business\Services\Local\DoChangeService.cs" />
     <Compile Include="Business\Services\Local\GetBasketCartStateService.cs" />
+    <Compile Include="Business\Services\Local\GetBasketRepresentationService.cs" />
     <Compile Include="Business\Services\Local\GetBasketTotalPriceService.cs" />
+    <Compile Include="Business\Services\Local\RemoveSellingCategoryService.cs" />
+    <Compile Include="Business\Services\Local\RemoveSellingItemService.cs" />
     <Compile Include="Business\Services\Local\ResetBasketCartService.cs" />
     <Compile Include="Business\Services\PointOfSaleService.cs" />
     <Compile Include="Business\Services\Remote\PrintTicketService.cs" />
+    <Compile Include="Forms\AddSellingCategoryForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddSellingCategoryForm.Designer.cs">
+      <DependentUpon>AddSellingCategoryForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AddSellingItemForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AddSellingItemForm.Designer.cs">
+      <DependentUpon>AddSellingItemForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\CheckoutForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\CheckoutForm.Designer.cs">
       <DependentUpon>CheckoutForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\AdminAccessForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\AdminAccessForm.Designer.cs">
+      <DependentUpon>AdminAccessForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\SellingForm.cs">
       <SubType>Form</SubType>
@@ -83,16 +118,28 @@
     <Compile Include="Forms\SellingStatisticForm.Designer.cs">
       <DependentUpon>SellingStatisticForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainProgram.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Forms\CheckoutForm.resx">
       <DependentUpon>CheckoutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AdminAccessForm.resx">
+      <DependentUpon>AdminAccessForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SellingForm.resx">
       <DependentUpon>SellingForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SellingStatisticForm.resx">
       <DependentUpon>SellingStatisticForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -153,7 +200,29 @@
   <ItemGroup>
     <None Include="Resources\carcaça.jpg" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\5euros.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\10euros.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\20euros.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\50euros.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="bpac">
+      <Guid>{90359D74-B7D9-467F-B938-3883F4CAB582}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

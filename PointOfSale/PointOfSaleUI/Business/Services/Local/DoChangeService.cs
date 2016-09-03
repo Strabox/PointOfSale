@@ -11,25 +11,33 @@ namespace PointOfSaleUI.Business.Services.Local
     public class DoChangeService : PointOfSaleService
     {
 
-        private Euro change;
-
         private Euro price;
 
-        public DoChangeService(Euro c,Euro p)
+        private Euro payment;
+
+        private Euro change;
+
+        public DoChangeService(Euro pa,Euro pr)
         {
-            change = c;
-            price = p;
+            payment = pa;
+            price = pr;
         }
 
         protected override void Dispatch()
         {
             try {
-                change.subtract(price);
+                change = new Euro(payment.IntegerPart, payment.DecimalPart);
+                change.Subtract(price);
             }
             catch (NegativeEuroResultException)
             {
                 throw new InsuficcientMoneyException();
             }
+        }
+
+        public Euro GetChange()
+        {
+            return change;
         }
 
     }

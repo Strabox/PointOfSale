@@ -67,7 +67,7 @@ namespace PointOfSaleTests.Unit
         public void AddSuccessTest_1()
         {
             Euro euro = new Euro(0, 10);
-            euro.add(new Euro(1, 0));
+            euro.Add(new Euro(1, 0));
             Assert.AreEqual(euro.IntegerPart, 1);
             Assert.AreEqual(euro.DecimalPart, 10);
         }
@@ -76,7 +76,7 @@ namespace PointOfSaleTests.Unit
         public void AddSuccessTest_2()
         {
             Euro euro = new Euro(3, 10);
-            euro.add(new Euro(4, 99));
+            euro.Add(new Euro(4, 99));
             Assert.AreEqual(euro.IntegerPart, 8);
             Assert.AreEqual(euro.DecimalPart, 9);
         }
@@ -87,7 +87,7 @@ namespace PointOfSaleTests.Unit
         public void SubtractionSuccessTest_1()
         {
             Euro euro = new Euro(1, 10);
-            euro.subtract(new Euro(0, 10));
+            euro.Subtract(new Euro(0, 10));
             Assert.AreEqual(euro.IntegerPart, 1);
             Assert.AreEqual(euro.DecimalPart, 0);
         }
@@ -96,7 +96,7 @@ namespace PointOfSaleTests.Unit
         public void SubtractionSuccessTest_2()
         {
             Euro euro = new Euro(1, 10);
-            euro.subtract(new Euro(1, 10));
+            euro.Subtract(new Euro(1, 10));
             Assert.AreEqual(euro.IntegerPart, 0);
             Assert.AreEqual(euro.DecimalPart, 0);
         }
@@ -105,7 +105,7 @@ namespace PointOfSaleTests.Unit
         public void SubtractionSuccessTest_3()
         {
             Euro euro = new Euro(7, 40);
-            euro.subtract(new Euro(2, 60));
+            euro.Subtract(new Euro(2, 60));
             Assert.AreEqual(euro.IntegerPart, 4);
             Assert.AreEqual(euro.DecimalPart, 80);
         }
@@ -116,7 +116,7 @@ namespace PointOfSaleTests.Unit
         public void SubtractionFailureTest_1()
         {
             Euro euro = new Euro(7, 40);
-            euro.subtract(new Euro(10, 60));
+            euro.Subtract(new Euro(10, 60));
         }
         [TestMethod]
         [ExpectedException(typeof(NegativeEuroResultException),
@@ -124,7 +124,7 @@ namespace PointOfSaleTests.Unit
         public void SubtractionFailureTest_2()
         {
             Euro euro = new Euro(8, 40);
-            euro.subtract(new Euro(8, 41));
+            euro.Subtract(new Euro(8, 41));
         }
 
         /* ======================= Multiply Test ======================== */
@@ -133,7 +133,7 @@ namespace PointOfSaleTests.Unit
         public void MultiplySuccessTest_1()
         {
             Euro euro = new Euro(0, 10);
-            euro.multiply(2);
+            euro.Multiply(2);
             Assert.AreEqual(euro.IntegerPart, 0);
             Assert.AreEqual(euro.DecimalPart, 20);
         }
@@ -142,7 +142,7 @@ namespace PointOfSaleTests.Unit
         public void MultiplySuccessTest_2()
         {
             Euro euro = new Euro(1, 10);
-            euro.multiply(6);
+            euro.Multiply(6);
             Assert.AreEqual(euro.IntegerPart, 6);
             Assert.AreEqual(euro.DecimalPart, 60);
         }
@@ -153,7 +153,7 @@ namespace PointOfSaleTests.Unit
         public void MultiplyTestNegativeMultiplier()
         {
             Euro euro = new Euro(1, 10);
-            euro.multiply(-3);
+            euro.Multiply(-3);
         }
 
         /* ======================= ToString Test ======================== */

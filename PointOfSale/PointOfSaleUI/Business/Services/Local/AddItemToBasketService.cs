@@ -7,23 +7,25 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleUI.Business.Services.Local
 {
+    /// <summary>
+    ///     Service add an item to the basket cart
+    /// </summary>
     public class AddItemToBasketService : PointOfSaleService
     {
 
-        private BasketCart basket;
+        private string itemName;
 
-        private SellableItem item;
-
-
-        public AddItemToBasketService(BasketCart b,SellableItem i)
+        public AddItemToBasketService(string iname)
         {
-            basket = b;
-            item = i;
+            itemName = iname;
         }
 
         protected override void Dispatch()
         {
-            basket.AddItemToBasket(item);
+            BasketCart basket = DomainRoot.BasketCart;
+            SellingItems items = DomainRoot.SellingItems;
+            SellableItem item = items.GetItem(itemName);
+            basket.AddItemToBasket(new SellableItem(item.Name,new Euro(item.Price.IntegerPart,item.Price.DecimalPart)));
         }
     }
 }

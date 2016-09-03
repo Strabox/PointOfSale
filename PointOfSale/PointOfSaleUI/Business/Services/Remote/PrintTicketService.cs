@@ -8,9 +8,15 @@ namespace PointOfSaleUI.Business.Services.Remote
 {
     public class PrintTicketService : PointOfSaleService
     {
+
+        public PrintTicketService(KeyValuePair<string,int>[] items)
+        {
+            
+        }
+
         protected override void Dispatch()
         {
-            throw new NotImplementedException();
+            //TODO
         }
     }
 }

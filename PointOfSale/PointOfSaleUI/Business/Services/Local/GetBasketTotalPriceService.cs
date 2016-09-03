@@ -11,15 +11,10 @@ namespace PointOfSaleUI.Business.Services.Local
     {
         private Euro totalPrice;
 
-        private BasketCart basket;
-
-        public GetBasketTotalPriceService(BasketCart b)
-        {
-            basket = b;
-        }
 
         protected sealed override void Dispatch()
         {
+            BasketCart basket = DomainRoot.BasketCart;
             totalPrice = new Euro(basket.TotalPrice.IntegerPart, basket.TotalPrice.DecimalPart);
         }
 

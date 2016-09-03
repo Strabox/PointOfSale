@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -9,7 +11,8 @@ namespace PointOfSaleUI.Business.Domain
     /// <summary>
     /// Representa an item that can be sold
     /// </summary>
-    public class SellableItem
+    [Serializable]
+    public class SellableItem : ISerializable
     {
 
         /// <summary>
@@ -23,7 +26,7 @@ namespace PointOfSaleUI.Business.Domain
         }
 
         /// <summary>
-        ///     Item PvP price
+        ///     Item PVP price
         /// </summary>
         private Euro price;
         public Euro Price
@@ -32,10 +35,45 @@ namespace PointOfSaleUI.Business.Domain
             set { price = value; }
         }
 
+        /// <summary>
+        ///     Items Image
+        /// </summary>
+        private Image image;
+        public Image Image
+        {
+            get { return image; }
+            set { image = value; }
+        }
+
+        public SellableItem(string name,Euro price,Image image)
+        {
+            Name = name;
+            Price = price;
+            Image = image;
+        }
+
         public SellableItem(string name,Euro price)
         {
             Name = name;
             Price = price;
+            image = null;
+        }
+
+        /// <summary>
+        ///     Deserialization constructor
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public SellableItem(SerializationInfo info, StreamingContext context)
+        {
+            Name = info.GetString("name");
+            Price = info.GetValue("price", typeof(Euro)) as Euro;
+            Image = info.GetValue("image", typeof(Image)) as Image;
+        }
+
+        public override string ToString()
+        {
+            return "Name: " + Name + " " + "Price: " + Price;
         }
 
         public override bool Equals(object obj)
@@ -49,6 +87,14 @@ namespace PointOfSaleUI.Business.Domain
             return Name.GetHashCode();
         }
 
+        /* ====================== Serialization Methods ====================== */
+
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("name", Name);
+            info.AddValue("price", Price);
+            info.AddValue("image", Image);
+        }
     }
 
     /// <summary>

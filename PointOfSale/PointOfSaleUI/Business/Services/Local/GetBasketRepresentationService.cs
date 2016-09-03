@@ -7,13 +7,20 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleUI.Business.Services.Local
 {
-    public class ResetBasketCartService : PointOfSaleService
+    public class GetBasketRepresentationService : PointOfSaleService
     {
+
+        private string basketRepresentation;
 
         protected override void Dispatch()
         {
             BasketCart basket = DomainRoot.BasketCart;
-            basket.ClearBasketCart();
+            basketRepresentation = basket.ToString();
+        }
+
+        public string GetBasketRepresentation()
+        {
+            return basketRepresentation;
         }
 
     }

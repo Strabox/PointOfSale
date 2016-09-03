@@ -21,23 +21,85 @@ namespace PointOfSaleUI
     public partial class SellingForm : Form
     {
 
-        private BasketCart basketCart;
-
-
         public SellingForm()
         {
             InitializeComponent();
         }
 
-
-        private void refreshUI()
+        /// <summary>
+        ///     Refresh/update the selling items in UI
+        /// </summary>
+        private void RefreshSellingItems()
         {
-            GetBasketTotalPriceService s = new GetBasketTotalPriceService(basketCart);
+            // Populate selling items
+            tabControlItems.TabPages.Clear();
+            IList<KeyValuePair<string, IList<SellableItem>>> items = DomainRoot.SellingItems.GetAllItems();
+            foreach (KeyValuePair<string, IList<SellableItem>> pair in items)
+            {
+                int itemsQuantity = pair.Value.Count;
+                int side = Convert.ToInt32(Math.Ceiling(Math.Sqrt(itemsQuantity)));
+                int columns, rows;
+                side = (side < 2) ? 2 : side;   //Prevent a Grid 1 X 1 due to size
+                columns = side;
+                rows = (((side * side) - itemsQuantity) == side) ? side - 1 : side; //Prevent empty lines
+                TableLayoutPanel tlp = new TableLayoutPanel() { Dock = DockStyle.Fill };
+                TabPage tab = new TabPage(pair.Key);
+                tab.Controls.Add(tlp);
+                tabControlItems.TabPages.Add(tab);
+
+                tlp.ColumnCount = columns;
+                for (int i = 0; i < columns; i++)
+                {
+                    tlp.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100 / columns));
+                }
+                tlp.RowCount = rows;
+                for (int i = 0; i < rows; i++)
+                {
+                    tlp.RowStyles.Add(new RowStyle(SizeType.Percent, 100 / rows));
+                }
+
+                foreach (SellableItem item in pair.Value)
+                {
+                    int column = 0, row = 0;
+                    PictureBox pic = new PictureBox();
+                    pic.SizeMode = PictureBoxSizeMode.StretchImage;
+                    pic.Dock = DockStyle.Fill;
+                    pic.Image = item.Image;
+                    pic.Click += (se, ev) => {
+                        MouseEventArgs evs = ev as MouseEventArgs;
+                        if (evs.Button == MouseButtons.Left)
+                        {
+                            new AddItemToBasketService(item.Name).Execute();
+                            RefreshBasketUI();
+                        }
+                    };
+                    tlp.Controls.Add(pic, column, row);
+                    if (column == (side - 1))
+                    {
+                        column = 0;
+                        row++;
+                    }
+                    else
+                    {
+                        column++;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Refresh/update the basket information in UI
+        /// </summary>
+        private void RefreshBasketUI()
+        {
+            GetBasketTotalPriceService s = new GetBasketTotalPriceService();
             s.Execute();
-            GetBasketCartStateService s2 = new GetBasketCartStateService(basketCart);
+            GetBasketCartStateService s2 = new GetBasketCartStateService();
             s2.Execute();
-            richTextBoxBasket.Text = basketCart.ToString();
-            labelTotalPrice.Text = s.GetTotalPrice().ToString();
+            GetBasketRepresentationService s3 = new GetBasketRepresentationService();
+            s3.Execute();
+            richTextBoxBasket.Text = s3.GetBasketRepresentation();
+            labelTotalPrice.Text = s.GetTotalPrice().ToString() + " " + Euro.GetSymbol() ;
             if (s2.BasketIsEmpty())
             {
                 buttonCheckout.Enabled = false;
@@ -45,14 +107,14 @@ namespace PointOfSaleUI
             else
             {
                 buttonCheckout.Enabled = true;
-            }
+            }   
         }
-
 
         private void SellingForm_Load(object sender, EventArgs e)
         {
             buttonCheckout.Enabled = false;
-            basketCart = new BasketCart();
+            DomainRoot.SellingItems.ResetToDefault();   //Override the design time selling items
+            RefreshSellingItems();
         }
 
         private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -62,51 +124,51 @@ namespace PointOfSaleUI
 
         private void globalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO
+            new SellingStatisticForm().ShowDialog();
         }
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //TODO
+            new SettingsForm().ShowDialog();
         }
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            new ResetBasketCartService(basketCart).Execute();
-            refreshUI();
+            new ResetBasketCartService().Execute();
+            RefreshBasketUI();
         }
 
         private void buttonCheckout_Click(object sender, EventArgs e)
         {
-            GetBasketTotalPriceService s = new GetBasketTotalPriceService(basketCart);
+            GetBasketTotalPriceService s = new GetBasketTotalPriceService();
             s.Execute();
             new CheckoutForm(s.GetTotalPrice()).ShowDialog();
         }
 
         private void SellingForm_KeyDown(object sender, KeyEventArgs e)
         {
-            Console.WriteLine("Wow");
+            if(e.KeyCode == Keys.Enter)
+            {
+                GetBasketTotalPriceService s = new GetBasketTotalPriceService();
+                s.Execute();
+                new CheckoutForm(s.GetTotalPrice()).ShowDialog();
+            }
         }
 
-        /* ============================================================ */
-
-        private void buttonBeverage_Click(object sender, EventArgs e)
+        private void SellingForm_Activated(object sender, EventArgs e)
         {
-            new AddItemToBasketService(basketCart, new SellableItem("Bebida", new Euro(0, 90))).Execute();
-            refreshUI();
+            RefreshBasketUI();
         }
 
-        private void buttonFries_Click(object sender, EventArgs e)
+        private void SellingForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new AddItemToBasketService(basketCart, new SellableItem("Batatas Fritas", new Euro(1, 50))).Execute();
-            refreshUI();
+            /*
+            TODO
+            if(new ExitingForm().ShowDialog() != DialogResult.OK)
+            {
+                e.Cancel = true;
+            }
+            */
         }
-
-        private void buttonChicken_Click(object sender, EventArgs e)
-        {
-            new AddItemToBasketService(basketCart, new SellableItem("Frango", new Euro(2, 50))).Execute();
-            refreshUI();
-        }
-
     }
 }
