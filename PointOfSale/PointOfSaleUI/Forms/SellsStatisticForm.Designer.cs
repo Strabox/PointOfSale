@@ -1,6 +1,6 @@
 ﻿namespace PointOfSaleUI.Forms
 {
-    partial class SellingStatisticForm
+    partial class SellsStatisticForm
     {
         /// <summary>
         /// Required designer variable.

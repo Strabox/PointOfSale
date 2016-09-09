@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleUI.Business.Exceptions
 {
-    public class PointOfSaleException : Exception
+    public class PointOfSaleException : ApplicationException
     {
 
     }

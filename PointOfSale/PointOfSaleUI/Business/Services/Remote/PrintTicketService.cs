@@ -14,6 +14,11 @@ namespace PointOfSaleUI.Business.Services.Remote
             
         }
 
+        protected override void AccessControl()
+        {
+         
+        }
+
         protected override void Dispatch()
         {
             //TODO

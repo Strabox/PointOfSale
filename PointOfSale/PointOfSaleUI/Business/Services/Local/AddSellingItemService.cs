@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -24,6 +25,7 @@ namespace PointOfSaleUI.Business.Services.Local
 
         private string category;
 
+
         public AddSellingItemService(string itemName,int priceEuro,
             int priceCents,Image itemImage,string category)
         {
@@ -34,10 +36,24 @@ namespace PointOfSaleUI.Business.Services.Local
             this.category = category;
         }
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            SellingItems items = DomainRoot.SellingItems;
-            SellableItem item = new SellableItem(itemName, new Euro(priceEuro, priceCents), itemImage);
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null || (user.Role != UserRole.ADMIN))
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            if(itemName == null || itemImage == null || category == null)
+            {
+                throw new ArgumentNullException();
+            }
+            SellingItems items = PointOfSaleRoot.GetInstance().CurrentProducts;
+            SellableProduct item = new SellableProduct(itemName, new Euro(priceEuro, priceCents), itemImage);
             items.AddItemToCategory(category, item);
         }
     }

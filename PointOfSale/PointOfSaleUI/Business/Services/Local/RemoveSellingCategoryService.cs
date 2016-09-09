@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,9 +21,23 @@ namespace PointOfSaleUI.Business.Services.Local
             this.category = category;
         }
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            SellingItems items = DomainRoot.SellingItems;
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null || (user.Role != UserRole.ADMIN))
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            if(category == null)
+            {
+                throw new ArgumentNullException();
+            }
+            SellingItems items = PointOfSaleRoot.GetInstance().CurrentProducts;
             items.RemoveCategory(category);
         }
     }

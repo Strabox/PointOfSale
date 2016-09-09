@@ -14,6 +14,7 @@ namespace PointOfSaleTests.Unit
     public class EuroTest
     {
 
+        [TestMethod]
         public void CreationSuccess_1()
         {
             Euro euro = new Euro(0, 0);
@@ -21,6 +22,7 @@ namespace PointOfSaleTests.Unit
             Assert.AreEqual(euro.DecimalPart, 0);
         }
 
+        [TestMethod]
         public void CreationSuccess_2()
         {
             Euro euro = new Euro(0, 99);
@@ -28,6 +30,7 @@ namespace PointOfSaleTests.Unit
             Assert.AreEqual(euro.DecimalPart, 99);
         }
 
+        [TestMethod]
         public void CreationSuccess_3()
         {
             Euro euro = new Euro(1, 0);
@@ -162,21 +165,21 @@ namespace PointOfSaleTests.Unit
         public void ToStringTest_1()
         {
             Euro euro = new Euro(1, 50);
-            Assert.AreEqual(euro.ToString(), "1,50 " + Euro.GetSymbol());
+            Assert.AreEqual(euro.ToString(), "1,50");
         }
 
         [TestMethod]
         public void ToStringTest_2()
         {
             Euro euro = new Euro(0, 0);
-            Assert.AreEqual(euro.ToString(), "0,0 " + Euro.GetSymbol());
+            Assert.AreEqual(euro.ToString(), "0,0");
         }
 
         [TestMethod]
         public void ToStringTest_3()
         {
             Euro euro = new Euro(0, 99);
-            Assert.AreEqual(euro.ToString(), "0,99 " + Euro.GetSymbol());
+            Assert.AreEqual(euro.ToString(), "0,99");
         }
 
     }

@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 namespace PointOfSaleUI.Business.Domain
 {
     /// <summary>
-    /// Representa an item that can be sold
+    /// Represents a product that can be sold
     /// </summary>
     [Serializable]
-    public class SellableItem : ISerializable
+    public class SellableProduct : ISerializable
     {
 
         /// <summary>
@@ -45,14 +45,14 @@ namespace PointOfSaleUI.Business.Domain
             set { image = value; }
         }
 
-        public SellableItem(string name,Euro price,Image image)
+        public SellableProduct(string name,Euro price,Image image)
         {
             Name = name;
             Price = price;
             Image = image;
         }
 
-        public SellableItem(string name,Euro price)
+        public SellableProduct(string name,Euro price)
         {
             Name = name;
             Price = price;
@@ -64,7 +64,7 @@ namespace PointOfSaleUI.Business.Domain
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
-        public SellableItem(SerializationInfo info, StreamingContext context)
+        public SellableProduct(SerializationInfo info, StreamingContext context)
         {
             Name = info.GetString("name");
             Price = info.GetValue("price", typeof(Euro)) as Euro;
@@ -78,7 +78,7 @@ namespace PointOfSaleUI.Business.Domain
 
         public override bool Equals(object obj)
         {
-            SellableItem item = obj as SellableItem;
+            SellableProduct item = obj as SellableProduct;
             return item.Name.Equals(Name);
         }
 
@@ -100,14 +100,14 @@ namespace PointOfSaleUI.Business.Domain
     /// <summary>
     ///     Compararer for sellable items
     /// </summary>
-    public class SellableItemComparer : IEqualityComparer<SellableItem>
+    public class SellableItemComparer : IEqualityComparer<SellableProduct>
     {
-        public bool Equals(SellableItem x, SellableItem y)
+        public bool Equals(SellableProduct x, SellableProduct y)
         {
             return x.Name.Equals(y.Name);
         }
 
-        public int GetHashCode(SellableItem obj)
+        public int GetHashCode(SellableProduct obj)
         {
             return obj.Name.GetHashCode();
         }

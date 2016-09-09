@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -26,6 +27,7 @@ namespace PointOfSaleUI.Business.Services.Local
 
         private Image itemNewImage;
 
+
         public ChangeSellingItemInformationService(string itemName,string category,
             string itemNewName,int itemNewEuro,int itemNewCents,Image itemNewImage)
         {
@@ -37,9 +39,23 @@ namespace PointOfSaleUI.Business.Services.Local
             this.itemNewImage = itemNewImage;
         }
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            SellingItems items = DomainRoot.SellingItems;
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null || (user.Role != UserRole.ADMIN))
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            if (itemName == null || category == null || itemNewName == null || itemNewImage == null)
+            {
+                throw new ArgumentNullException();
+            }
+            SellingItems items = PointOfSaleRoot.GetInstance().CurrentProducts;
             items.SetItemData(category, itemName, itemNewName, new Euro(itemNewEuro, itemNewCents), itemNewImage);
         }
     }

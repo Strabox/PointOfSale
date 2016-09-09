@@ -18,7 +18,7 @@ namespace PointOfSaleUI.Business.Domain
         private IDictionary<string, int> statisticData;
 
         private Euro totalValue;
-
+        public Euro TotalValue { get { return new Euro(totalValue.IntegerPart, totalValue.DecimalPart); } }
 
         public SellingStatistic()
         {
@@ -43,27 +43,27 @@ namespace PointOfSaleUI.Business.Domain
         }
 
         
-        public void AddItem(SellableItem item,int quantity)
+        public void AddProduct(SellableProduct product,int quantity)
         {
             if(quantity < 1)
             {
-                throw new ArgumentException();
+                throw new ArgumentException("Product quantity < 1");
             }
 
-            Euro total = new Euro(item.Price.IntegerPart, item.Price.DecimalPart);
+            Euro total = new Euro(product.Price.IntegerPart, product.Price.DecimalPart);
             total.Multiply(quantity);
             totalValue.Add(total);
-            if (statisticData.ContainsKey(item.Name))
+            if (statisticData.ContainsKey(product.Name))
             {
-                statisticData[item.Name] = statisticData[item.Name] + quantity;
+                statisticData[product.Name] = statisticData[product.Name] + quantity;
             }
             else
             {
-                statisticData.Add(item.Name, quantity);
+                statisticData.Add(product.Name, quantity);
             }
         }
 
-        public List<KeyValuePair<string, int>> GetAllItems()
+        public List<KeyValuePair<string, int>> GetAllProducts()
         {
             List<KeyValuePair<string, int>> res = new List<KeyValuePair<string, int>>();
             foreach(KeyValuePair<string, int> entry in statisticData)
@@ -93,7 +93,7 @@ namespace PointOfSaleUI.Business.Domain
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
-            info.AddValue("statisticData", GetAllItems());
+            info.AddValue("statisticData", GetAllProducts());
             info.AddValue("totalValue", totalValue);
         }
 

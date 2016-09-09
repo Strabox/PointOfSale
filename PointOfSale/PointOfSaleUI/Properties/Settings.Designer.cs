@@ -26,9 +26,9 @@ namespace PointOfSaleUI.Properties {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Microsoft Sans Serif, 26.25pt")]
-        public global::System.Drawing.Font SellableButtonPrice {
+        public global::System.Drawing.Font SellingButtonPriceFont {
             get {
-                return ((global::System.Drawing.Font)(this["SellableButtonPrice"]));
+                return ((global::System.Drawing.Font)(this["SellingButtonPriceFont"]));
             }
         }
     }

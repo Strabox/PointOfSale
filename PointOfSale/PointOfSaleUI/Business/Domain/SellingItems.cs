@@ -17,18 +17,18 @@ namespace PointOfSaleUI.Business.Domain
         /// <summary>
         ///     Pairs Category, List of items in that category
         /// </summary>
-        private IDictionary<string, IList<SellableItem>> sellingItems;
+        private IDictionary<string, IList<SellableProduct>> sellingItems;
 
 
         public SellingItems()
         {
-            sellingItems = new Dictionary<string, IList<SellableItem>>();
+            sellingItems = new Dictionary<string, IList<SellableProduct>>();
         }
 
         private void VerifyItemExist(string category,string name)
         {
-            IList<SellableItem> items = sellingItems[category];
-            foreach (SellableItem item in items)
+            IList<SellableProduct> items = sellingItems[category];
+            foreach (SellableProduct item in items)
             {
                 if (item.Name.Equals(name))
                 {
@@ -37,14 +37,14 @@ namespace PointOfSaleUI.Business.Domain
             }
         }
 
-        public void AddItemToCategory(string category,SellableItem newItem)
+        public void AddItemToCategory(string category,SellableProduct newItem)
         {
             if (!sellingItems.ContainsKey(category))
             {
                 throw new CategoryDoesntExistException();
             }
             VerifyItemExist(category,newItem.Name);
-            IList<SellableItem> items = sellingItems[category];
+            IList<SellableProduct> items = sellingItems[category];
             items.Add(newItem);
         }
 
@@ -54,8 +54,8 @@ namespace PointOfSaleUI.Business.Domain
             {
                 throw new CategoryDoesntExistException();
             }
-            IList<SellableItem> items = sellingItems[category];
-            foreach (SellableItem item in items)
+            IList<SellableProduct> items = sellingItems[category];
+            foreach (SellableProduct item in items)
             {
                 if (item.Name.Equals(itemName))
                 {
@@ -67,29 +67,24 @@ namespace PointOfSaleUI.Business.Domain
 
         public void SetItemData(string category,string itemName,string newItemName,Euro newPrice,Image itemNewImage)
         {
-            bool done = false;
             if (!itemName.Equals(newItemName))
             {
                 VerifyItemExist(category,newItemName);
             }
-            foreach(KeyValuePair<string,IList<SellableItem>> entry in sellingItems)
+            foreach(KeyValuePair<string,IList<SellableProduct>> entry in sellingItems)
             {
-                if (done)
-                {
-                    break;
-                }
-                foreach(SellableItem item in entry.Value)
+                foreach(SellableProduct item in entry.Value)
                 {
                     if (itemName.Equals(item.Name))
                     {
                         item.Name = newItemName;
                         item.Price = newPrice;
                         item.Image = itemNewImage;
-                        done = true;
-                        break;
+                        return;
                     }
                 }
             }
+            throw new SellingItemDoesntExistException();
         }
 
         public void RemoveCategory(string category)
@@ -103,15 +98,15 @@ namespace PointOfSaleUI.Business.Domain
             {
                 throw new CategoryAlreadyExistException();
             }
-            sellingItems.Add(category, new List<SellableItem>());
+            sellingItems.Add(category, new List<SellableProduct>());
         }
 
 
-        public SellableItem GetItem(string itemName)
+        public SellableProduct GetItem(string itemName)
         {
-            foreach (KeyValuePair<string, IList<SellableItem>> entry in sellingItems)
+            foreach (KeyValuePair<string, IList<SellableProduct>> entry in sellingItems)
             {
-                foreach (SellableItem item in entry.Value)
+                foreach (SellableProduct item in entry.Value)
                 {
                     if (itemName.Equals(item.Name))
                     {
@@ -122,6 +117,11 @@ namespace PointOfSaleUI.Business.Domain
             throw new SellingItemDoesntExistException();
         }
 
+        public void Clear()
+        {
+            sellingItems.Clear();
+        }
+
         /// <summary>
         ///     More to development purpose than production
         /// </summary>
@@ -129,31 +129,30 @@ namespace PointOfSaleUI.Business.Domain
         {
             sellingItems.Clear();
             AddCategory("Festas");
-            AddItemToCategory("Festas", new SellableItem("Bebida", new Euro(0, 80), Properties.Resources.cerveja));
-            AddItemToCategory("Festas", new SellableItem("Frango", new Euro(2, 50), Properties.Resources.frango));
-            AddItemToCategory("Festas", new SellableItem("Salada de Tomate", new Euro(1, 50), Properties.Resources.tomate));
-            AddItemToCategory("Festas", new SellableItem("Batatas Fritas", new Euro(1, 50), Properties.Resources.batatas));
-            AddItemToCategory("Festas", new SellableItem("Carcaça", new Euro(0, 75), Properties.Resources.carcaça));
-            AddItemToCategory("Festas", new SellableItem("Arroz Doce", new Euro(1, 50), Properties.Resources.arrozDoce));
-            AddItemToCategory("Festas", new SellableItem("Bifana", new Euro(1, 90), Properties.Resources.bifana));
-            AddItemToCategory("Festas", new SellableItem("Café", new Euro(0, 50), Properties.Resources.café));
-            AddItemToCategory("Festas", new SellableItem("Caracóis", new Euro(2, 50), Properties.Resources.caracóis));
-            AddItemToCategory("Festas", new SellableItem("Filhós", new Euro(1, 40), Properties.Resources.filhó));
-            AddItemToCategory("Festas", new SellableItem("Melão", new Euro(1, 50), Properties.Resources.melão));
-            AddItemToCategory("Festas", new SellableItem("Pipis", new Euro(2, 50), Properties.Resources.pipis));
+            AddItemToCategory("Festas", new SellableProduct("Bebida", new Euro(0, 80), Properties.Resources.bebidas));
+            AddItemToCategory("Festas", new SellableProduct("Frango", new Euro(7, 0), Properties.Resources.frango));
+            AddItemToCategory("Festas", new SellableProduct("Salada de Tomate", new Euro(1, 50), Properties.Resources.tomate));
+            AddItemToCategory("Festas", new SellableProduct("Batatas Fritas", new Euro(1, 50), Properties.Resources.batatas));
+            AddItemToCategory("Festas", new SellableProduct("Carcaça", new Euro(0, 50), Properties.Resources.carcaça));
+            AddItemToCategory("Festas", new SellableProduct("Arroz Doce", new Euro(1, 0), Properties.Resources.arrozDoce));
+            AddItemToCategory("Festas", new SellableProduct("Bifana", new Euro(2, 50), Properties.Resources.bifana));
+            AddItemToCategory("Festas", new SellableProduct("Caracóis", new Euro(2, 00), Properties.Resources.caracóis));
+            AddItemToCategory("Festas", new SellableProduct("Filhós", new Euro(1, 0), Properties.Resources.filhó));
+            AddItemToCategory("Festas", new SellableProduct("Melão", new Euro(1, 0), Properties.Resources.melão));
+            //AddItemToCategory("Festas", new SellableItem("Pipis", new Euro(2, 50), Properties.Resources.pipis));
         }
 
-        public IList<KeyValuePair<string,IList<SellableItem>>> GetAllItems()
+        public IList<KeyValuePair<string,IList<SellableProduct>>> GetAllItems()
         {
-            IList<KeyValuePair<string, IList<SellableItem>>> res = new List<KeyValuePair<string, IList<SellableItem>>>();
-            foreach (KeyValuePair<string, IList<SellableItem>> entry in sellingItems)
+            IList<KeyValuePair<string, IList<SellableProduct>>> res = new List<KeyValuePair<string, IList<SellableProduct>>>();
+            foreach (KeyValuePair<string, IList<SellableProduct>> entry in sellingItems)
             {
-                IList<SellableItem> listRes = new List<SellableItem>();
-                KeyValuePair<string, IList<SellableItem>> pair = new KeyValuePair<string, IList<SellableItem>>(entry.Key,listRes);
+                IList<SellableProduct> listRes = new List<SellableProduct>();
+                KeyValuePair<string, IList<SellableProduct>> pair = new KeyValuePair<string, IList<SellableProduct>>(entry.Key,listRes);
                 res.Add(pair);
-                foreach (SellableItem item in entry.Value)
+                foreach (SellableProduct item in entry.Value)
                 {
-                    listRes.Add(new SellableItem(item.Name, item.Price, item.Image));
+                    listRes.Add(new SellableProduct(item.Name, item.Price, item.Image));
                 }
             }
             return res;
@@ -162,10 +161,10 @@ namespace PointOfSaleUI.Business.Domain
         public override string ToString()
         {
             string res = "";
-            foreach(KeyValuePair<string,IList<SellableItem>> entry in sellingItems)
+            foreach(KeyValuePair<string,IList<SellableProduct>> entry in sellingItems)
             {
                 res += "Category " + entry.Key + ":" + Environment.NewLine;
-                foreach(SellableItem item in entry.Value)
+                foreach(SellableProduct item in entry.Value)
                 {
                     res += "  " + item + Environment.NewLine;
                 }

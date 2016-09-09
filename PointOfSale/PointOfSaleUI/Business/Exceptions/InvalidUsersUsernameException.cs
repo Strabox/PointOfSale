@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PointOfSaleUI.Business.Domain.Change
+namespace PointOfSaleUI.Business.Exceptions
 {
-    public class ChangeStategy
+    public class InvalidUsersUsernameException : PointOfSaleException
     {
     }
 }

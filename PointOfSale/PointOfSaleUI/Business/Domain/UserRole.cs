@@ -8,6 +8,6 @@ namespace PointOfSaleUI.Business.Domain
 {
     public enum UserRole
     {
-        NORMAL,ADMIN
+        NORMAL,ADMIN,ANONYMOUS
     }
 }

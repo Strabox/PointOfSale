@@ -16,23 +16,23 @@ namespace PointOfSaleUI.Business.Domain
         /// <summary>
         ///     Contain the items and respective quantities
         /// </summary>
-        private Dictionary<SellableItem, int> basketCart;
+        private Dictionary<SellableProduct, int> basketCart;
 
         /// <summary>
         ///     Total price of all the items in the basket cart
         /// </summary>
         private Euro totalPrice;
-        public Euro TotalPrice { get { return totalPrice; } }
+        public Euro TotalPrice { get { return new Euro(totalPrice.IntegerPart, totalPrice.DecimalPart); } }
 
 
         public BasketCart()
         {
-            basketCart = new Dictionary<SellableItem, int>(new SellableItemComparer());
+            basketCart = new Dictionary<SellableProduct, int>(new SellableItemComparer());
             totalPrice = new Euro();
         }
 
 
-        public void AddItemToBasket(SellableItem item)
+        public void AddItemToBasket(SellableProduct item)
         {
             totalPrice.Add(item.Price);
             if (basketCart.ContainsKey(item))
@@ -45,7 +45,7 @@ namespace PointOfSaleUI.Business.Domain
             }
         }
 
-        public void RemoveItemFromBasket(SellableItem item)
+        public void RemoveItemFromBasket(SellableProduct item)
         {
             if (basketCart.ContainsKey(item))
             {
@@ -60,12 +60,12 @@ namespace PointOfSaleUI.Business.Domain
             }
         }
         
-        public List<KeyValuePair<SellableItem,int>> GetAllItems()
+        public List<KeyValuePair<SellableProduct,int>> GetAllItems()
         {
-            List<KeyValuePair<SellableItem, int>> res = new List<KeyValuePair<SellableItem, int>>();
-            foreach(KeyValuePair<SellableItem,int> entry in basketCart)
+            List<KeyValuePair<SellableProduct, int>> res = new List<KeyValuePair<SellableProduct, int>>();
+            foreach(KeyValuePair<SellableProduct,int> entry in basketCart)
             {
-                res.Add(new KeyValuePair<SellableItem, int>(entry.Key, entry.Value));
+                res.Add(new KeyValuePair<SellableProduct, int>(entry.Key, entry.Value));
             }
             return res;
         }
@@ -91,7 +91,7 @@ namespace PointOfSaleUI.Business.Domain
         public override string ToString()
         {
             string res = string.Empty;
-            foreach(KeyValuePair<SellableItem,int> entry in basketCart)
+            foreach(KeyValuePair<SellableProduct,int> entry in basketCart)
             {
                 res += entry.Value + " X " + entry.Key.Name + Environment.NewLine;
 

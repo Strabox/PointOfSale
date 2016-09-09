@@ -51,16 +51,16 @@ namespace PointOfSaleUI.Business.Domain
         }
 
 
-        public Euro(int integerPart,int decimalPart)
-        {
-            IntegerPart = integerPart;
-            DecimalPart = decimalPart;
-        }
-
         public Euro()
         {
             IntegerPart = 0;
             DecimalPart = 0;
+        }
+
+        public Euro(int integerPart,int decimalPart)
+        {
+            IntegerPart = integerPart;
+            DecimalPart = decimalPart;
         }
 
         /// <summary>
@@ -74,65 +74,97 @@ namespace PointOfSaleUI.Business.Domain
             DecimalPart = info.GetInt32("decimalPart");
         }
 
-
-        public void Add(Euro euro)
+        public static Euro operator +(Euro e1,Euro e2)
         {
-            int decimalSum = euro.DecimalPart + DecimalPart;
-            IntegerPart += euro.IntegerPart;
-            if (decimalSum >= 100)
+            Euro res = new Euro();
+            int decimalAux = e1.DecimalPart + e2.DecimalPart;
+            res.IntegerPart = e1.IntegerPart + e2.IntegerPart;
+            if(decimalAux >= 100)
             {
-                IntegerPart++;
-                DecimalPart = decimalSum % 100;
+                res.IntegerPart++;
+                res.DecimalPart = decimalAux % 100;
             }
             else
             {
-                DecimalPart = decimalSum;
+                res.DecimalPart = decimalAux;
             }
+            return res;
+        }
+
+        public static Euro operator -(Euro e1, Euro e2)
+        {
+            Euro res = new Euro();
+            int integerPartSub = e1.IntegerPart - e2.IntegerPart;
+            int centsPartSub = e1.DecimalPart - e2.DecimalPart;
+            if(integerPartSub < 0 || (integerPartSub == 0 && centsPartSub < 0))
+            {
+                throw new NegativeEuroResultException();
+            }
+            res.IntegerPart = integerPartSub;
+            if(centsPartSub < 0)
+            {
+                res.IntegerPart--;
+                res.DecimalPart = 100 - (-centsPartSub);
+            }
+            else
+            {
+                res.DecimalPart = centsPartSub;
+            }
+            return res;
+        }
+
+        public static Euro operator *(Euro e1, int times)
+        {
+            Euro res = new Euro();
+            if(times < 0)
+            {
+                throw new ArgumentException("Can't be negative multiplier");
+            }
+            else if(times == 0)
+            {
+                res.IntegerPart = 0;
+                res.DecimalPart = 0;
+            }
+            else if(times == 1)
+            {
+                res.IntegerPart = e1.IntegerPart;
+                res.DecimalPart = e1.DecimalPart;
+            }
+            else
+            {
+                Euro initial = new Euro(e1.IntegerPart, e1.DecimalPart);
+                for(int i = 0; i < times; i++)
+                {
+                    res += initial;
+                }
+            }
+            return res;
+        }
+
+        public static Euro operator*(int times,Euro e1)
+        {
+            return e1 * times;
+        }
+
+        public void Add(Euro euro)
+        {
+            Euro aux = this + euro;
+            IntegerPart = aux.IntegerPart;
+            DecimalPart = aux.DecimalPart;
         }
 
         public void Subtract(Euro euro)
         {
-            int integerPartSub = IntegerPart - euro.IntegerPart;
-            int decimalPartSub = DecimalPart - euro.decimalPart;
-            if (integerPartSub < 0 || (integerPartSub == 0 && decimalPartSub < 0))
-            {
-                throw new NegativeEuroResultException();
-            }
-            IntegerPart = integerPartSub;
-            if(decimalPartSub < 0)
-            {
-                IntegerPart--;
-                DecimalPart = 100 - (-decimalPartSub);
-            }
-            else
-            {
-                DecimalPart = decimalPartSub;
-            }
+            Euro aux = this - euro;
+            IntegerPart = aux.IntegerPart;
+            DecimalPart = aux.DecimalPart;
         }
 
         public void Multiply(int times)
         {
-            if (times < 0)
-            {
-                throw new ArgumentException("Can't be negative multiplier");
-            }
-            else if (times == 0)
-            {
-                IntegerPart = 0;
-                DecimalPart = 0;
-            }
-            else if (times == 1){
-                return;
-            }
-            else
-            {
-                times--;
-                Euro initial = new Euro(IntegerPart, DecimalPart);
-                for (int i = 0; i < times; i++)
-                {
-                    Add(initial);
-                }
-            }
+            Euro aux = times * this;
+            IntegerPart = aux.IntegerPart;
+            DecimalPart = aux.DecimalPart;
         }
          
         public static string GetSymbol()
@@ -140,9 +172,15 @@ namespace PointOfSaleUI.Business.Domain
             return SYMBOL;
         }
 
+        public override bool Equals(object obj)
+        {
+            Euro euro = obj as Euro;
+            return euro.IntegerPart == IntegerPart && euro.DecimalPart == DecimalPart;
+        }
+
         public override string ToString()
         {
-            if(DecimalPart < 10)
+            if(DecimalPart < 10 && DecimalPart > 0)
             {
                 return IntegerPart + ",0" + DecimalPart;
             }
@@ -150,6 +188,11 @@ namespace PointOfSaleUI.Business.Domain
             {
                 return IntegerPart + "," + DecimalPart;
             }
+        }
+
+        public override int GetHashCode()
+        {
+            return IntegerPart + DecimalPart;
         }
 
         /* ======================= Serialization Items ======================= */

@@ -15,12 +15,19 @@ namespace PointOfSaleUI.Business.Persistence
 
         public static readonly string PERSISTENT_ITEMS_FILE = "PointOfSaleItems.pos";
 
+        public static readonly string PERSISTENT_USERS_FILE = "PointOfSaleUsers.pos";
+
+        public static void DeleteFile(string filePath)
+        {
+            File.Delete(filePath);
+        }
 
         public static void PersistObjectToBinaryFile(string filePath, Object o)
         {
             Stream stream = File.Open(filePath, FileMode.Create);
             BinaryFormatter binaryFormatter = new BinaryFormatter();
             binaryFormatter.Serialize(stream, o);
+            stream.Flush();
             stream.Close();
         }
 

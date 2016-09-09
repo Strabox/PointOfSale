@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace PointOfSaleUI.Forms
 {
-    public partial class AddSellingItemForm : Form
+    public partial class AboutForm : Form
     {
-        public AddSellingItemForm()
+        public AboutForm()
         {
             InitializeComponent();
+        }
+
+        private void AboutForm_Load(object sender, EventArgs e)
+        {
+            labelVersion.Text = ProductVersion;
         }
     }
 }

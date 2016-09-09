@@ -16,7 +16,7 @@ namespace PointOfSaleUI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new SellingForm());
+            Application.Run(new SellProductsForm());
         }
     }
 }

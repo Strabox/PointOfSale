@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using PointOfSaleUI.Business.Services.Local;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,13 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace PointOfSaleUI.Forms
 {
-    public partial class SellingStatisticForm : Form
+    public partial class SellsStatisticForm : Form
     {
 
-        public SellingStatisticForm()
+        public SellsStatisticForm()
         {
             InitializeComponent();
-            List<KeyValuePair<string, int>> sd = DomainRoot.SellingStatistic.GetAllItems(); 
+            List<KeyValuePair<string, int>> sd = PointOfSaleRoot.GetInstance().SellingStatistic.GetAllProducts(); 
             foreach(KeyValuePair<string,int> pair in sd)
             {
                 Series s = chartTotalSelling.Series.Add(pair.Key);
@@ -35,10 +36,17 @@ namespace PointOfSaleUI.Forms
 
         private void buttonClear_Click(object sender, EventArgs e)
         {
-            if(MessageBox.Show("Têm a certeza que deseja apagar os dados?","Apagar estatistica",MessageBoxButtons.YesNo,MessageBoxIcon.Warning) == DialogResult.Yes)
+            try
             {
-                new ClearStatisticDataService().Execute();
-                chartTotalSelling.Series.Clear();
+                if (MessageBox.Show("Têm a certeza que deseja apagar os dados?", "Apagar estatistica", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+                {
+                    new ClearStatisticDataService().Execute();
+                    chartTotalSelling.Series.Clear();
+                }
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
     }

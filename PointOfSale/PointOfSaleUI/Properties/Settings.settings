@@ -2,7 +2,7 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="PointOfSaleUI.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="SellableButtonPrice" Type="System.Drawing.Font" Scope="Application">
+    <Setting Name="SellingButtonPriceFont" Type="System.Drawing.Font" Scope="Application">
       <Value Profile="(Default)">Microsoft Sans Serif, 26.25pt</Value>
     </Setting>
   </Settings>

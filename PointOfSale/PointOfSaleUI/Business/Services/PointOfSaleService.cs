@@ -14,8 +14,11 @@ namespace PointOfSaleUI.Business.Services
         
         public void Execute()
         {
+            AccessControl();
             Dispatch();
         }
+
+        protected abstract void AccessControl();
 
         protected abstract void Dispatch();
 

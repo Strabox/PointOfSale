@@ -38,7 +38,6 @@
             this.buttonTotalMoney = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label5 = new System.Windows.Forms.Label();
-            this.textBoxPayment = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -46,6 +45,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.buttonPay = new System.Windows.Forms.Button();
             this.buttonCancel = new System.Windows.Forms.Button();
+            this.priceTextBoxPayment = new PointOfSaleUI.MyControls.PriceTextBox();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -139,8 +139,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.priceTextBoxPayment);
             this.panel2.Controls.Add(this.label5);
-            this.panel2.Controls.Add(this.textBoxPayment);
             this.panel2.Controls.Add(this.label1);
             this.panel2.Location = new System.Drawing.Point(2, 23);
             this.panel2.Name = "panel2";
@@ -157,19 +157,6 @@
             this.label5.Size = new System.Drawing.Size(31, 33);
             this.label5.TabIndex = 14;
             this.label5.Text = "€";
-            // 
-            // textBoxPayment
-            // 
-            this.textBoxPayment.Font = new System.Drawing.Font("Microsoft Sans Serif", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPayment.Location = new System.Drawing.Point(197, 8);
-            this.textBoxPayment.Name = "textBoxPayment";
-            this.textBoxPayment.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.textBoxPayment.Size = new System.Drawing.Size(113, 40);
-            this.textBoxPayment.TabIndex = 13;
-            this.textBoxPayment.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.textBoxPayment.TextChanged += new System.EventHandler(this.textBoxPayment_TextChanged);
-            this.textBoxPayment.KeyDown += new System.Windows.Forms.KeyEventHandler(this.textBoxPayment_KeyDown);
-            this.textBoxPayment.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.textBoxPayment_KeyPress);
             // 
             // label1
             // 
@@ -250,6 +237,15 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
+            // priceTextBoxPayment
+            // 
+            this.priceTextBoxPayment.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.priceTextBoxPayment.Location = new System.Drawing.Point(207, 11);
+            this.priceTextBoxPayment.Name = "priceTextBoxPayment";
+            this.priceTextBoxPayment.Size = new System.Drawing.Size(100, 31);
+            this.priceTextBoxPayment.TabIndex = 15;
+            this.priceTextBoxPayment.TextChanged += new System.EventHandler(this.textBoxPayment_TextChanged);
+            // 
             // CheckoutForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -297,7 +293,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label labelChange;
-        private System.Windows.Forms.TextBox textBoxPayment;
         private System.Windows.Forms.Label label5;
+        private MyControls.PriceTextBox priceTextBoxPayment;
     }
 }

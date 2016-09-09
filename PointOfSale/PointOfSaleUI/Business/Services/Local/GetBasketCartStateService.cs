@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,9 +13,19 @@ namespace PointOfSaleUI.Business.Services.Local
 
         private bool basketEmpty;
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            BasketCart basketCart = DomainRoot.BasketCart;
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null)
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            BasketCart basketCart = PointOfSaleRoot.GetInstance().BasketCart;
             basketEmpty = basketCart.IsEmpty();
         }
 

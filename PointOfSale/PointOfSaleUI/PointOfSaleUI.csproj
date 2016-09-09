@@ -12,6 +12,24 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>C:\Users\André\Desktop\Teste\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>1</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <PublishWizardCompleted>true</PublishWizardCompleted>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,9 +50,46 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>9263237EC5B5BFCCE8B16E19108DD9918FCB10AD</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestKeyFile>PointOfSaleUI_TemporaryKey.pfx</ManifestKeyFile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <GenerateManifests>true</GenerateManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>true</SignManifests>
+  </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Iesi.Collections, Version=4.0.0.0, Culture=neutral, PublicKeyToken=aa95f207798dfdb4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Iesi.Collections.4.0.0.4000\lib\net40\Iesi.Collections.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.102.0\lib\net451\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.EF6, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.EF6.1.0.102.0\lib\net451\System.Data.SQLite.EF6.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.102.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.102.0\lib\net451\System.Data.SQLite.Linq.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -48,51 +103,61 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Business\Domain\BasketCart.cs" />
-    <Compile Include="Business\Domain\Change\ChangeStategy.cs" />
     <Compile Include="Business\Domain\IMoney.cs" />
-    <Compile Include="Business\Domain\DomainRoot.cs" />
+    <Compile Include="Business\Domain\PointOfSaleRoot.cs" />
     <Compile Include="Business\Domain\Euro.cs" />
-    <Compile Include="Business\Domain\SellableItem.cs" />
+    <Compile Include="Business\Domain\SellableProduct.cs" />
     <Compile Include="Business\Domain\SellingItems.cs" />
     <Compile Include="Business\Domain\User.cs" />
     <Compile Include="Business\Domain\UserRole.cs" />
     <Compile Include="Business\Exceptions\CategoryAlreadyExistException.cs" />
     <Compile Include="Business\Exceptions\CategoryDoesntExistException.cs" />
     <Compile Include="Business\Exceptions\ImpossibleSubtractionException.cs" />
-    <Compile Include="Business\Exceptions\InsuficcientMoneyException.cs" />
+    <Compile Include="Business\Exceptions\InsuficcientPaymentException.cs" />
     <Compile Include="Business\Exceptions\InvalidParameterMoneyException.cs" />
+    <Compile Include="Business\Exceptions\InvalidUsernamePasswordCombinationException.cs" />
+    <Compile Include="Business\Exceptions\InvalidUsersUsernameException.cs" />
     <Compile Include="Business\Exceptions\NegativeEuroResultException.cs" />
+    <Compile Include="Business\Exceptions\NoAuthorizationException.cs" />
     <Compile Include="Business\Exceptions\PointOfSaleException.cs" />
     <Compile Include="Business\Domain\SellingStatistic.cs" />
     <Compile Include="Business\Exceptions\SellingItemAlreadyExistException.cs" />
     <Compile Include="Business\Exceptions\SellingItemDoesntExistException.cs" />
     <Compile Include="Business\Persistence\PersistenceManager.cs" />
+    <Compile Include="Business\Persistence\PointOfSaleDBContext.cs" />
     <Compile Include="Business\Services\Integrator\CheckoutBasketCartIntegratorService.cs" />
-    <Compile Include="Business\Services\Local\AddItemToBasketService.cs" />
+    <Compile Include="Business\Services\Local\AddCategoryService.cs" />
+    <Compile Include="Business\Services\Local\AddProductToBasketService.cs" />
     <Compile Include="Business\Services\Local\AddSellingItemService.cs" />
     <Compile Include="Business\Services\Local\ChangeSellingItemInformationService.cs" />
     <Compile Include="Business\Services\Local\CheckoutBasketCartService.cs" />
     <Compile Include="Business\Services\Local\ClearStatisticDataService.cs" />
     <Compile Include="Business\Services\Local\DoChangeService.cs" />
+    <Compile Include="Business\Services\Local\ExitPointOfSaleAppService.cs" />
     <Compile Include="Business\Services\Local\GetBasketCartStateService.cs" />
     <Compile Include="Business\Services\Local\GetBasketRepresentationService.cs" />
     <Compile Include="Business\Services\Local\GetBasketTotalPriceService.cs" />
+    <Compile Include="Business\Services\Local\GetLoggedInUserRoleService.cs" />
+    <Compile Include="Business\Services\Local\GetLoggedInUserService.cs" />
+    <Compile Include="Business\Services\Local\LoginService.cs" />
+    <Compile Include="Business\Services\Local\LogoutService.cs" />
     <Compile Include="Business\Services\Local\RemoveSellingCategoryService.cs" />
     <Compile Include="Business\Services\Local\RemoveSellingItemService.cs" />
     <Compile Include="Business\Services\Local\ResetBasketCartService.cs" />
+    <Compile Include="Business\Services\Local\ResetSellingItemsToDefaultService.cs" />
     <Compile Include="Business\Services\PointOfSaleService.cs" />
     <Compile Include="Business\Services\Remote\PrintTicketService.cs" />
-    <Compile Include="Forms\AddSellingCategoryForm.cs">
+    <Compile Include="Forms\AboutForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AddSellingCategoryForm.Designer.cs">
-      <DependentUpon>AddSellingCategoryForm.cs</DependentUpon>
+    <Compile Include="Forms\AboutForm.Designer.cs">
+      <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AddSellingItemForm.cs">
+    <Compile Include="Forms\AddSellableProductForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AddSellingItemForm.Designer.cs">
-      <DependentUpon>AddSellingItemForm.cs</DependentUpon>
+    <Compile Include="Forms\AddSellableProductForm.Designer.cs">
+      <DependentUpon>AddSellableProductForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\CheckoutForm.cs">
       <SubType>Form</SubType>
@@ -100,23 +165,23 @@
     <Compile Include="Forms\CheckoutForm.Designer.cs">
       <DependentUpon>CheckoutForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\AdminAccessForm.cs">
+    <Compile Include="Forms\LoginForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\AdminAccessForm.Designer.cs">
-      <DependentUpon>AdminAccessForm.cs</DependentUpon>
+    <Compile Include="Forms\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SellingForm.cs">
+    <Compile Include="Forms\SellProductsForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SellingForm.Designer.cs">
-      <DependentUpon>SellingForm.cs</DependentUpon>
+    <Compile Include="Forms\SellProductsForm.Designer.cs">
+      <DependentUpon>SellProductsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SellingStatisticForm.cs">
+    <Compile Include="Forms\SellsStatisticForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SellingStatisticForm.Designer.cs">
-      <DependentUpon>SellingStatisticForm.cs</DependentUpon>
+    <Compile Include="Forms\SellsStatisticForm.Designer.cs">
+      <DependentUpon>SellsStatisticForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\SettingsForm.cs">
       <SubType>Form</SubType>
@@ -125,18 +190,27 @@
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
     <Compile Include="MainProgram.cs" />
+    <Compile Include="MyControls\PriceTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Forms\AboutForm.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\AddSellableProductForm.resx">
+      <DependentUpon>AddSellableProductForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CheckoutForm.resx">
       <DependentUpon>CheckoutForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\AdminAccessForm.resx">
-      <DependentUpon>AdminAccessForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SellingForm.resx">
-      <DependentUpon>SellingForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SellProductsForm.resx">
+      <DependentUpon>SellProductsForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SellingStatisticForm.resx">
-      <DependentUpon>SellingStatisticForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SellsStatisticForm.resx">
+      <DependentUpon>SellsStatisticForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
@@ -151,6 +225,8 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="packages.config" />
+    <None Include="PointOfSaleUI_TemporaryKey.pfx" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -189,12 +265,6 @@
     <None Include="Resources\caracóis.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\filhó.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\melão.jpg" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\pipis.JPG" />
   </ItemGroup>
   <ItemGroup>
@@ -223,7 +293,35 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\filhó.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\melão.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bebidas.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.102.0\build\net451\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net451\System.Data.SQLite.Core.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.102.0\build\net451\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.102.0\build\net451\System.Data.SQLite.Core.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

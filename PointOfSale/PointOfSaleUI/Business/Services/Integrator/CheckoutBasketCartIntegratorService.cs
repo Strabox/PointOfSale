@@ -21,7 +21,12 @@ namespace PointOfSaleUI.Business.Services.Integrator
             localCheckoutService = new CheckoutBasketCartService();
         }
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
+        {
+        
+        }
+
+        protected sealed override void Dispatch()
         {
             localCheckoutService.Execute();
             printTicketService.Execute();

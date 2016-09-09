@@ -27,12 +27,12 @@ namespace PointOfSaleUI.Forms
             payment = new Euro();
             labelTotalPrice.Text = totalPrice.ToString();
             buttonPay.Enabled = false;
-            textBoxPayment.Select();
+            priceTextBoxPayment.Select();
         }
 
         private void RefreshUI()
         {
-            textBoxPayment.Text = payment.ToString();
+            priceTextBoxPayment.Text = payment.ToString();
         }
 
         private void CheckoutForm_Load(object sender, EventArgs e)
@@ -73,64 +73,12 @@ namespace PointOfSaleUI.Forms
                     labelChange.Text = s.GetChange().ToString();
                     buttonPay.Enabled = true;
                 }
-                catch (InsuficcientMoneyException)
+                catch (InsuficcientPaymentException)
                 {
                     labelChange.Text = "--,-- €";
                 }
 
             }
-        }
-
-        private string str = "";
-        private void textBoxPayment_KeyDown(object sender, KeyEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            int KeyCode = e.KeyValue;
-
-            if (!IsNumeric(KeyCode))
-            {
-                e.Handled = true;
-                return;
-            }
-            else
-            {
-                e.Handled = true;
-            }
-            if (((KeyCode == 8) || (KeyCode == 46)) && (str.Length > 0))
-            {
-                str = str.Substring(0, str.Length - 1);
-            }
-            else if (!((KeyCode == 8) || (KeyCode == 46)))
-            {
-                str = str + Convert.ToChar(KeyCode);
-            }
-            if (str.Length == 0)
-            {
-                textBox.Text = "";
-            }
-            if (str.Length == 1)
-            {
-                textBox.Text = "0,0" + str;
-            }
-            else if (str.Length == 2)
-            {
-                textBox.Text = "0," + str;
-            }
-            else if (str.Length > 2)
-            {
-                textBox.Text = str.Substring(0, str.Length - 2) + "," +
-                                str.Substring(str.Length - 2);
-            }
-        }
-
-        private bool IsNumeric(int Val)
-        {
-            return ((Val >= 48 && Val <= 57) || (Val == 8) || (Val == 46));
-        }
-
-        private void textBoxPayment_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
         }
 
         private void button5Euro_Click(object sender, EventArgs e)

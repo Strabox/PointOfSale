@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,19 @@ namespace PointOfSaleUI.Business.Services.Local
 {
     public class ResetBasketCartService : PointOfSaleService
     {
-
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            BasketCart basket = DomainRoot.BasketCart;
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null)
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            BasketCart basket = PointOfSaleRoot.GetInstance().BasketCart;
             basket.ClearBasketCart();
         }
 

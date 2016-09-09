@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using PointOfSaleUI.Business.Persistence;
 using System;
 using System.Collections.Generic;
@@ -9,20 +10,29 @@ using System.Threading.Tasks;
 namespace PointOfSaleUI.Business.Services.Local
 {
     /// <summary>
-    ///     Service that checkout the cart service when the client pays for the content
+    ///     Service that checkout the cart service when the client pays for the products content
     /// </summary>
     public class CheckoutBasketCartService : PointOfSaleService
     {
-
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            BasketCart basket = DomainRoot.BasketCart;
-            SellingStatistic statisticData = DomainRoot.SellingStatistic;
-
-            List<KeyValuePair<SellableItem, int>> basketItems = basket.GetAllItems();
-            foreach(KeyValuePair<SellableItem,int> entry in basketItems)
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null)
             {
-                statisticData.AddItem(entry.Key, entry.Value);
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            BasketCart basket = PointOfSaleRoot.GetInstance().BasketCart;
+            SellingStatistic statisticData = PointOfSaleRoot.GetInstance().SellingStatistic;
+
+            List<KeyValuePair<SellableProduct, int>> basketItems = basket.GetAllItems();
+            foreach(KeyValuePair<SellableProduct,int> entry in basketItems)
+            {
+                statisticData.AddProduct(entry.Key, entry.Value);
             }
 
             PersistenceManager.PersistObjectToBinaryFile(PersistenceManager.PERSISTENT_DATA_FILE, statisticData);

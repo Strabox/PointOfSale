@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace PointOfSaleUI.Business.Services.Local
 {
+    /// <summary>
+    ///     Service that given a payment amount and a price returns the respective change
+    /// </summary>
     public class DoChangeService : PointOfSaleService
     {
 
@@ -17,21 +20,35 @@ namespace PointOfSaleUI.Business.Services.Local
 
         private Euro change;
 
-        public DoChangeService(Euro pa,Euro pr)
+        public DoChangeService(Euro payment,Euro price)
         {
-            payment = pa;
-            price = pr;
+            this.payment = payment;
+            this.price = price;
         }
 
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null)
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            if(payment == null || price == null)
+            {
+                throw new ArgumentNullException();
+            }
+
             try {
-                change = new Euro(payment.IntegerPart, payment.DecimalPart);
-                change.Subtract(price);
+                change = payment - price;
             }
             catch (NegativeEuroResultException)
             {
-                throw new InsuficcientMoneyException();
+                throw new InsuficcientPaymentException();
             }
         }
 
@@ -39,6 +56,5 @@ namespace PointOfSaleUI.Business.Services.Local
         {
             return change;
         }
-
     }
 }

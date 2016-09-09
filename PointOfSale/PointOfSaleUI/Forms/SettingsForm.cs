@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using PointOfSaleUI.Business.Services.Local;
 using System;
 using System.Collections.Generic;
@@ -21,26 +22,36 @@ namespace PointOfSaleUI.Forms
 
         private bool itemSelected = false;
 
+        /// <summary>
+        ///     At least one modification to selling items was made.
+        /// </summary>
+        private bool sellingItemsModified = false;
+
+
         public SettingsForm()
         {
             InitializeComponent();
         }
 
+        /// <summary>
+        ///     Refresh the list of selling items
+        /// </summary>
         private void RefreshSellingItemsUI()
         {
             int imageIndex = 0;
             treeViewCategoryItems.ImageList = new ImageList();
-            treeViewCategoryItems.Nodes.Clear();
-            foreach (KeyValuePair<string, IList<SellableItem>> entry in DomainRoot.SellingItems.GetAllItems())
+            treeViewCategoryItems.Nodes.Clear();    //Clear the tree view items list
+            foreach (KeyValuePair<string, IList<SellableProduct>> entry in PointOfSaleRoot.GetInstance().CurrentProducts.GetAllItems())
             {
                 TreeNode node = treeViewCategoryItems.Nodes.Add(entry.Key);
                 node.ContextMenuStrip = contextMenuStripCategoryMenu;
-                foreach (SellableItem item in entry.Value)
+                foreach (SellableProduct item in entry.Value)
                 {
                     treeViewCategoryItems.ImageList.Images.Add(item.Image);
-                    TreeNode subNode = node.Nodes.Add(item.Name);
-                    subNode.ImageIndex = imageIndex;
-                    subNode.SelectedImageIndex = imageIndex;
+                    TreeNode itemNode = node.Nodes.Add(item.Name);
+                    itemNode.ContextMenuStrip = contextMenuStripItemMenu;
+                    itemNode.ImageIndex = imageIndex;
+                    itemNode.SelectedImageIndex = imageIndex;
 
                     imageIndex++;
                 }
@@ -52,101 +63,62 @@ namespace PointOfSaleUI.Forms
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             buttonEditSelectedItem.Enabled = false;
+            buttonAddCategory.Enabled = false;
             RefreshSellingItemsUI();
         }
 
         private void treeViewCategoryItems_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            TreeNode node = e.Node;
-            if(node.Parent != null)     //Children Node click
-            { 
-                SellableItem item = DomainRoot.SellingItems.GetItem(node.Text);
-                nameItemSelected = item.Name;
-                categoryItemSelected = node.Parent.Text;
+            if (e.Button == MouseButtons.Left)      //Selecting item with left click
+            {
+                TreeNode node = e.Node;
+                if (node.Parent != null)        //Children Node click
+                {
+                    SellableProduct item = PointOfSaleRoot.GetInstance().CurrentProducts.GetItem(node.Text);
+                    nameItemSelected = item.Name;
+                    categoryItemSelected = node.Parent.Text;
 
-                pictureBoxSelectedItem.Image = item.Image;
-                textBoxSelectedItemName.Text = item.Name;
-                textBoxSelectedItemPrice.Text = item.Price.ToString();
+                    pictureBoxSelectedItem.Image = item.Image;
+                    textBoxSelectedItemName.Text = item.Name;
+                    priceTextBoxSelectedItemPrice.Text = item.Price.ToString();
 
-                itemSelected = true;
+                    itemSelected = true;
+                }
+                else                            //Root Node Click
+                {
+                    itemSelected = false;
+                    buttonEditSelectedItem.Enabled = false;
+                    pictureBoxSelectedItem.Image = null;
+                    textBoxSelectedItemName.Text = string.Empty;
+                    priceTextBoxSelectedItemPrice.Text = string.Empty;
+                }
             }
-            else                        //Root Node Click
+            else if (e.Button == MouseButtons.Right)    //Selecting item with right click
             {
-                itemSelected = false;
-                buttonEditSelectedItem.Enabled = false;
-                pictureBoxSelectedItem.Image = null;
-                textBoxSelectedItemName.Text = string.Empty;
-                textBoxSelectedItemPrice.Text = string.Empty;
+                treeViewCategoryItems.SelectedNode = e.Node;
             }
-        }
-
-        /* ============================ Price TextBox Management =========================== */
-
-        private string str = "";
-
-        private bool IsNumeric(int Val)
-        {
-            return ((Val >= 48 && Val <= 57) || (Val == 8) || (Val == 46));
-        }
-
-        private void textBoxSelectedItemPrice_KeyDown(object sender, KeyEventArgs e)
-        {
-            TextBox textBox = sender as TextBox;
-            int KeyCode = e.KeyValue;
-
-            if (!IsNumeric(KeyCode))
-            {
-                e.Handled = true;
-                return;
-            }
-            else
-            {
-                e.Handled = true;
-            }
-            if (((KeyCode == 8) || (KeyCode == 46)) && (str.Length > 0))
-            {
-                str = str.Substring(0, str.Length - 1);
-            }
-            else if (!((KeyCode == 8) || (KeyCode == 46)))
-            {
-                str = str + Convert.ToChar(KeyCode);
-            }
-            if (str.Length == 0)
-            {
-                textBox.Text = "";
-            }
-            if (str.Length == 1)
-            {
-                textBox.Text = "0,0" + str;
-            }
-            else if (str.Length == 2)
-            {
-                textBox.Text = "0," + str;
-            }
-            else if (str.Length > 2)
-            {
-                textBox.Text = str.Substring(0, str.Length - 2) + "," +
-                                str.Substring(str.Length - 2);
-            }
-        }
-
-        private void textBoxSelectedItemPrice_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = true;
         }
 
         private void buttonEditSelectedItem_Click(object sender, EventArgs e)
         {
-            string newName = textBoxSelectedItemName.Text;
-            string[] tokens = textBoxSelectedItemPrice.Text.Split(',');
-            int euroPrice = int.Parse(tokens[0]);
-            int centsPrice = int.Parse(tokens[1]);
-            Image image = pictureBoxSelectedItem.Image;
+            try
+            {
+                string newName = textBoxSelectedItemName.Text;
+                string[] tokens = priceTextBoxSelectedItemPrice.Text.Split(',');
+                int euroPrice = int.Parse(tokens[0]);
+                int centsPrice = int.Parse(tokens[1]);
+                Image image = pictureBoxSelectedItem.Image;
 
-            ChangeSellingItemInformationService service;
-            service = new ChangeSellingItemInformationService(nameItemSelected, categoryItemSelected,
-                newName, euroPrice, centsPrice, image);
-            service.Execute();
+                ChangeSellingItemInformationService service;
+                service = new ChangeSellingItemInformationService(nameItemSelected, categoryItemSelected,
+                    newName, euroPrice, centsPrice, image);
+                service.Execute();
+                sellingItemsModified = true;
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         private void buttonLoadImage_Click(object sender, EventArgs e)
@@ -167,6 +139,113 @@ namespace PointOfSaleUI.Forms
             if (itemSelected)
             {
                 buttonEditSelectedItem.Enabled = true;
+            }
+        }
+
+        private void toolStripMenuRemoveItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripItem menuItem = sender as ToolStripItem;
+                ContextMenuStrip ctxStrip = menuItem.Owner as ContextMenuStrip;
+                TreeView treeView = ctxStrip.SourceControl as TreeView;
+                TreeNode clickedNode = treeView.SelectedNode;
+
+                string category = clickedNode.Parent.Text;
+                string item = clickedNode.Text;
+
+                RemoveSellingItemService service = new RemoveSellingItemService(category, item);
+                service.Execute();
+                RefreshSellingItemsUI();
+                sellingItemsModified = true;
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+            
+        }
+
+        private void toolStripMenuRemoveCategory_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripItem menuItem = sender as ToolStripItem;
+                ContextMenuStrip ctxStrip = menuItem.Owner as ContextMenuStrip;
+                TreeView treeView = ctxStrip.SourceControl as TreeView;
+                TreeNode clickedNode = treeView.SelectedNode;
+
+                string category = clickedNode.Text;
+                RemoveSellingCategoryService service = new RemoveSellingCategoryService(category);
+                service.Execute();
+                RefreshSellingItemsUI();
+                sellingItemsModified = true;
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void toolStripMenuAddItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                ToolStripItem menuItem = sender as ToolStripItem;
+                ContextMenuStrip ctxStrip = menuItem.Owner as ContextMenuStrip;
+                TreeView treeView = ctxStrip.SourceControl as TreeView;
+                TreeNode clickedNode = treeView.SelectedNode;
+
+                if (new AddSellableProductForm(clickedNode.Text).ShowDialog() == DialogResult.OK)
+                {
+                    RefreshSellingItemsUI();
+                    sellingItemsModified = true;
+                }
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void textBoxCategoryName_TextChanged(object sender, EventArgs e)
+        {
+            TextBox textBoxCategoryName = sender as TextBox;
+            if (textBoxCategoryName.Text.Equals(string.Empty))
+            {
+                buttonAddCategory.Enabled = false;
+            }
+            else
+            {
+                buttonAddCategory.Enabled = true;
+            }
+        }
+
+        private void buttonAddCategory_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string newCategory = textBoxCategoryName.Text;
+                AddCategoryService service = new AddCategoryService(newCategory);
+                service.Execute();
+                RefreshSellingItemsUI();
+                sellingItemsModified = true;
+            }
+            catch (NoAuthorizationException)
+            {
+                MessageBox.Show("Não tem autorização para efectuar esta acção", "Autorização", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
+        }
+
+        private void SettingsForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (sellingItemsModified)
+            {
+                this.DialogResult = DialogResult.OK;
+            }
+            else
+            {
+                this.DialogResult = DialogResult.Ignore;
             }
         }
     }

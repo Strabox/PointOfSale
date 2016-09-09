@@ -1,4 +1,5 @@
 ﻿using PointOfSaleUI.Business.Domain;
+using PointOfSaleUI.Business.Exceptions;
 using PointOfSaleUI.Business.Persistence;
 using System;
 using System.Collections.Generic;
@@ -10,10 +11,19 @@ namespace PointOfSaleUI.Business.Services.Local
 {
     public class ClearStatisticDataService : PointOfSaleService
     {
-
-        protected override void Dispatch()
+        protected sealed override void AccessControl()
         {
-            SellingStatistic statistic = DomainRoot.SellingStatistic;
+            PointOfSaleRoot root = PointOfSaleRoot.GetInstance();
+            User user = root.LoggedInUser;
+            if (root.LoggedInUser == null || (user.Role != UserRole.ADMIN))
+            {
+                throw new NoAuthorizationException();
+            }
+        }
+
+        protected sealed override void Dispatch()
+        {
+            SellingStatistic statistic = PointOfSaleRoot.GetInstance().SellingStatistic;
             statistic.ClearStatistic();
             PersistenceManager.PersistObjectToBinaryFile(PersistenceManager.PERSISTENT_DATA_FILE, statistic);
         }
